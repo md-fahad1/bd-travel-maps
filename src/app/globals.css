@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Hind Siliguri", "Anek Bangla", system-ui, sans-serif;
+  --font-display: "Anek Bangla", "Hind Siliguri", system-ui, sans-serif;
+  --color-paper: #faf8f4;
+  --color-sand: #f1ece3;
+  --color-sand-line: #e6dfd1;
+  --color-ink: #16211d;
+  --color-ink-soft: #6f6a5f;
+  --color-brand: #12795a;
+  --color-brand-deep: #0f6b50;
+  --color-brand-tint: #e3f1ec;
+  --color-flag-red: #e5384f;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--color-brand-tint);
+}
