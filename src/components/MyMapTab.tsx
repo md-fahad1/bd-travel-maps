@@ -188,7 +188,7 @@ export default function MyMapTab({ state, update }: Props) {
                 onClick={() => fileRef.current?.click()}
                 className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-dashed border-ink-soft/30 bg-white/70 p-2 pr-4 text-left transition hover:bg-white"
               >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-sand">
+                <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md bg-sand">
                   {state.photo ? (
                     <img
                       src={state.photo}
@@ -216,7 +216,7 @@ export default function MyMapTab({ state, update }: Props) {
                     {state.photo ? "ছবি বদলান" : "আপনার ছবি যোগ করুন"}
                   </span>
                   <span className="block text-xs text-ink-soft">
-                    কার্ডে গোল করে বসবে
+                    কার্ডে চৌকো করে বসবে
                   </span>
                 </span>
               </button>
