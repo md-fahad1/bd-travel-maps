@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DistrictPicker from "./DistrictPicker";
 import MapCard from "./MapCard";
 import Toast from "./Toast";
@@ -8,7 +8,7 @@ import { DISTRICTS } from "@/data/districts";
 import { DIVISIONS } from "@/data/divisions";
 import { THEMES } from "@/data/themes";
 import { bn } from "@/lib/bn";
-import { exportCard, type ExportFormat } from "@/lib/exportCard";
+import { exportCard, setPreviewHandler, type ExportFormat } from "@/lib/exportCard";
 import type { AppState } from "@/lib/useAppState";
 
 interface Props {
@@ -72,6 +72,22 @@ export default function MyMapTab({ state, update }: Props) {
   const [busy, setBusy] = useState<ExportFormat | null>(null);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
+  const [preview, setPreview] = useState<{ url: string; name: string } | null>(null);
+  const previewShown = useRef(false);
+
+  useEffect(() => {
+    setPreviewHandler((blob, name) => {
+      previewShown.current = true;
+      setPreview({ url: URL.createObjectURL(blob), name });
+    });
+    return () => setPreviewHandler(null);
+  }, []);
+
+  const closePreview = () => {
+    const url = preview?.url;
+    setPreview(null);
+    if (url) setTimeout(() => URL.revokeObjectURL(url), 2000);
+  };
 
   const theme = THEMES.find((t) => t.id === state.theme) ?? THEMES[0];
 
@@ -88,14 +104,21 @@ export default function MyMapTab({ state, update }: Props) {
 
     setError("");
     setBusy(format);
+    previewShown.current = false;
 
     try {
       await exportCard(cardRef.current, format, theme.bg);
-      setToast(`✓ ${format.toUpperCase()} ডাউনলোড শুরু হয়েছে`);
-      setTimeout(() => setToast(""), 3000);
+      if (!previewShown.current) {
+        setToast(`✓ ${format.toUpperCase()} ডাউনলোড শুরু হয়েছে`);
+        setTimeout(() => setToast(""), 3000);
+      }
     } catch (e) {
       console.error(e);
-      setError("ডাউনলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      setError(
+        "ডাউনলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন। (" +
+          (e instanceof Error ? e.message : "unknown") +
+          ")",
+      );
     } finally {
       setBusy(null);
     }
@@ -407,6 +430,48 @@ export default function MyMapTab({ state, update }: Props) {
           </section>
         </div>
       </div>
+      {preview && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/60 p-3 backdrop-blur-sm sm:items-center"
+          onClick={closePreview}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl bg-white p-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-display text-base font-extrabold">✓ আপনার ম্যাপ তৈরি হয়েছে</h3>
+            <p className="mt-1 text-xs text-ink-soft">
+              নিচের বাটনে চাপ দিয়ে সেভ করুন। না হলে ছবিতে অনেকক্ষণ চেপে ধরে "Download image" বেছে নিন।
+            </p>
+
+            <div className="mt-3 max-h-[55vh] overflow-auto rounded-2xl border border-sand-line bg-sand">
+              {preview.name.endsWith(".pdf") ? (
+                <p className="p-6 text-center text-sm">📄 {preview.name}</p>
+              ) : (
+                <img src={preview.url} alt="আপনার ম্যাপ" className="w-full" />
+              )}
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2.5">
+              <a
+                href={preview.url}
+                download={preview.name}
+                className="font-display rounded-2xl bg-gradient-to-r from-brand-deep to-brand px-3 py-3 text-center text-sm font-extrabold text-white"
+              >
+                ↓ সেভ করুন
+              </a>
+              <button
+                type="button"
+                onClick={closePreview}
+                className="font-display rounded-2xl border border-sand-line bg-white px-3 py-3 text-sm font-extrabold"
+              >
+                বন্ধ করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Toast message={toast} />
     </>
   );

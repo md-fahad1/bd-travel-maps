@@ -4,8 +4,14 @@ export type ExportFormat = "png" | "jpg" | "pdf";
 
 const TARGET_WIDTH = 1080; // output pixel width
 
+export type PreviewHandler = (blob: Blob, filename: string) => void;
+let previewHandler: PreviewHandler | null = null;
+export function setPreviewHandler(fn: PreviewHandler | null) {
+  previewHandler = fn;
+}
+
 function ratioFor(node: HTMLElement) {
-  return Math.max(2, TARGET_WIDTH / node.offsetWidth);
+  return Math.min(3, Math.max(2, TARGET_WIDTH / node.offsetWidth));
 }
 
 function dataUrlToBlob(dataUrl: string): Blob {
@@ -24,6 +30,13 @@ async function saveBlob(blob: Blob, filename: string) {
     (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
 
   // Phones: open the share sheet so the person can "Save Image" / "Save to Files".
+  // Android: show an in-page preview with a real "Save" button. A fresh tap is
+  // needed for downloads to work reliably after the long render.
+  if (/Android/i.test(ua) && previewHandler) {
+    previewHandler(blob, filename);
+    return;
+  }
+
   if (mobile && typeof navigator.canShare === "function") {
     const file = new File([blob], filename, { type: blob.type });
     if (navigator.canShare({ files: [file] })) {
