@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import DistrictPicker from "./DistrictPicker";
 import MapCard from "./MapCard";
+import Toast from "./Toast";
 import { DISTRICTS } from "@/data/districts";
 import { DIVISIONS } from "@/data/divisions";
 import { THEMES } from "@/data/themes";
@@ -70,6 +71,7 @@ export default function MyMapTab({ state, update }: Props) {
 
   const [busy, setBusy] = useState<ExportFormat | null>(null);
   const [error, setError] = useState("");
+  const [toast, setToast] = useState("");
 
   const theme = THEMES.find((t) => t.id === state.theme) ?? THEMES[0];
 
@@ -89,6 +91,8 @@ export default function MyMapTab({ state, update }: Props) {
 
     try {
       await exportCard(cardRef.current, format, theme.bg);
+      setToast(`✓ ${format.toUpperCase()} ডাউনলোড শুরু হয়েছে`);
+      setTimeout(() => setToast(""), 3000);
     } catch (e) {
       console.error(e);
       setError("ডাউনলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
@@ -403,6 +407,7 @@ export default function MyMapTab({ state, update }: Props) {
           </section>
         </div>
       </div>
+      <Toast message={toast} />
     </>
   );
 }

@@ -13,7 +13,7 @@ export default function Toast({ message }: { message: string }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 380, damping: 26 }}
-            className="font-display rounded-full bg-ink px-6 py-3.5 text-[16px] font-semibold text-white shadow-2xl"
+            className="font-display rounded-2xl bg-gradient-to-r from-brand-deep to-brand px-5 py-3 text-[15px] font-semibold text-white shadow-2xl shadow-brand/30"
           >
             {message}
           </motion.div>
