@@ -102,7 +102,7 @@ export default function MyMapTab({ state, update }: Props) {
     setTimeout(() => setToast(""), 3000);
   };
 
-  const closePreview = () => {  const closePreview = () => {
+  const closePreview = () => {
     const url = preview?.url;
     setPreview(null);
     if (url) setTimeout(() => URL.revokeObjectURL(url), 2000);
@@ -513,8 +513,7 @@ export default function MyMapTab({ state, update }: Props) {
         </div>
       )}
 
-      <Toast message={toast} />
+           <Toast message={toast} />
     </>
   );
-}
 }
