@@ -5,7 +5,7 @@ import { DISTRICTS, MAP_HEIGHT, MAP_WIDTH } from "@/data/districts";
 import { DIVISIONS } from "@/data/divisions";
 import type { Theme } from "@/data/themes";
 import { bn } from "@/lib/bn";
-
+import { useDataUrl } from "@/lib/useDataUrl";
 interface Props {
   visited: string[];
   theme: Theme;
@@ -20,6 +20,7 @@ const MapCard = forwardRef<HTMLDivElement, Props>(function MapCard(
   { visited, theme, name, photo, showLabels, onToggle },
   ref,
 ) {
+  const devPhoto = useDataUrl("/developer.jpeg");
   const set = new Set(visited);
   const count = visited.length;
   const total = DISTRICTS.length;
@@ -128,6 +129,32 @@ const MapCard = forwardRef<HTMLDivElement, Props>(function MapCard(
           <span>
             {bn(count)}টি জেলা · {bn(DIVISIONS.length)}টির মধ্যে {bn(divisionsVisited)}টি বিভাগ
           </span>
+        </div>
+        <div className="mt-4 flex items-center justify-end gap-3">
+          <div className="text-right leading-tight" style={{ color: theme.sub }}>
+            <p className="text-[10px] sm:text-xs">Developed by</p>
+            <p className="font-display text-xs font-semibold sm:text-base" style={{ color: theme.ink }}>
+              Md Fahad Khan
+            </p>
+            <p className="text-[10px] sm:text-xs">Software Engineer</p>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {devPhoto ? (
+  // eslint-disable-next-line @next/next/no-img-element
+  <img
+    src={devPhoto}
+    alt="Md Fahad Khan"
+    className="h-10 w-10 rounded-full object-cover sm:h-14 sm:w-14"
+    style={{ boxShadow: `0 0 0 2px ${theme.accent}` }}
+  />
+) : (
+  <span
+    className="font-display flex h-10 w-10 items-center justify-center rounded-full text-sm font-extrabold sm:h-14 sm:w-14 sm:text-lg"
+    style={{ background: theme.accent, color: theme.bg }}
+  >
+    MF
+  </span>
+)}
         </div>
       </div>
     </div>

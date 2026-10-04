@@ -1,6 +1,8 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
+import Reveal from "./Reveal";
 import { DISTRICTS } from "@/data/districts";
 import { DIVISIONS } from "@/data/divisions";
 import { bn } from "@/lib/bn";
@@ -40,19 +42,28 @@ export default function DistrictPicker({ visited, onChange }: Props) {
     else onChange(Array.from(new Set([...visited, ...ids])));
   };
 
+  const randomPick = () => {
+    const rest = DISTRICTS.filter((d) => !set.has(d.id));
+    if (!rest.length) return;
+    onChange([...visited, rest[Math.floor(Math.random() * rest.length)].id]);
+  };
+
   return (
-    <section
-      id="picker"
-      className="scroll-mt-24 rounded-[28px] border border-sand-line bg-white/60 p-5 sm:p-7"
-    >
+    <section id="picker" className="scroll-mt-24 rounded-[28px] border border-sand-line bg-white/70 p-5 sm:p-7">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-xl font-extrabold">যেসব জেলায় গিয়েছি</h2>
-        <span className="font-display rounded-full bg-brand-tint px-3.5 py-1.5 text-sm font-semibold text-brand">
+        <h2 className="font-display text-xl font-extrabold sm:text-2xl">যেসব জেলায় গিয়েছি</h2>
+        <motion.span
+          key={visited.length}
+          initial={{ scale: 1.25 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 500, damping: 15 }}
+          className="font-display rounded-full bg-brand-tint px-3.5 py-1.5 text-sm font-semibold text-brand"
+        >
           {bn(visited.length)} / {bn(DISTRICTS.length)}
-        </span>
+        </motion.span>
       </div>
 
-      <label className="mt-5 flex items-center gap-3 rounded-2xl border border-sand-line bg-sand px-4 py-3.5 focus-within:border-brand">
+      <label className="mt-5 flex items-center gap-3 rounded-2xl border border-sand-line bg-sand px-4 py-3.5 transition focus-within:border-brand focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(18,121,90,0.12)]">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6f6a5f" strokeWidth="2" strokeLinecap="round">
           <circle cx="11" cy="11" r="7" />
           <path d="m20 20-3.5-3.5" />
@@ -65,73 +76,88 @@ export default function DistrictPicker({ visited, onChange }: Props) {
         />
       </label>
 
-      <div className="mt-4 flex gap-4 text-[15px]">
-        <button
-          type="button"
-          onClick={() => onChange(DISTRICTS.map((d) => d.id))}
-          className="underline decoration-ink/40 underline-offset-4 hover:decoration-ink"
-        >
-          সব বাছাই করুন
-        </button>
-        <button
-          type="button"
-          onClick={() => onChange([])}
-          className="underline decoration-ink/40 underline-offset-4 hover:decoration-ink"
-        >
-          সব মুছুন
-        </button>
+      <div className="mt-4 flex flex-wrap gap-2 text-[15px]">
+        {[
+          { l: "সব বাছাই করুন", f: () => onChange(DISTRICTS.map((d) => d.id)) },
+          { l: "সব মুছুন", f: () => onChange([]) },
+          { l: "🎲 এলোমেলো একটা", f: randomPick },
+        ].map((b) => (
+          <motion.button
+            key={b.l}
+            type="button"
+            onClick={b.f}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.94 }}
+            className="rounded-full border border-sand-line bg-white px-4 py-2 font-semibold hover:border-brand"
+          >
+            {b.l}
+          </motion.button>
+        ))}
       </div>
 
       <div className="mt-4">
         {groups.length === 0 && (
-          <p className="border-t border-sand-line py-8 text-center text-ink-soft">
-            কোনো জেলা পাওয়া যায়নি।
-          </p>
+          <p className="border-t border-sand-line py-8 text-center text-ink-soft">কোনো জেলা পাওয়া যায়নি।</p>
         )}
         {groups.map(({ div, all, shown }) => {
           const ids = all.map((d) => d.id);
           const n = ids.filter((id) => set.has(id)).length;
           const full = n === ids.length;
           return (
-            <div key={div.id} className="border-t border-sand-line py-4">
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="font-display text-[17px] font-extrabold">
-                  {div.bn}{" "}
-                  <span className="text-[15px] font-semibold text-ink-soft">
-                    {bn(n)}/{bn(ids.length)}
-                  </span>
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => toggleMany(ids)}
-                  className="text-[15px] underline decoration-ink/40 underline-offset-4 hover:decoration-ink"
-                >
-                  {full ? "সব মুছুন" : "সব বাছাই"}
-                </button>
+            <Reveal key={div.id} y={16}>
+              <div className="border-t border-sand-line py-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="font-display text-[17px] font-extrabold">
+                    {div.bn}{" "}
+                    <span className="text-[15px] font-semibold text-ink-soft">
+                      {bn(n)}/{bn(ids.length)}
+                    </span>
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => toggleMany(ids)}
+                    className="text-[15px] underline decoration-ink/40 underline-offset-4 hover:decoration-ink"
+                  >
+                    {full ? "সব মুছুন" : "সব বাছাই"}
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-x-2.5 gap-y-2.5">
+                  {shown.map((d) => {
+                    const on = set.has(d.id);
+                    return (
+                      <motion.button
+                        key={d.id}
+                        type="button"
+                        onClick={() => toggle(d.id)}
+                        aria-pressed={on}
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.9 }}
+                        animate={{
+                          backgroundColor: on ? "#0f6b50" : "#f1ece3",
+                          color: on ? "#ffffff" : "#16211d",
+                        }}
+                        transition={{ duration: 0.2 }}
+                        className="rounded-full px-5 py-2.5 text-[17px]"
+                      >
+                        <AnimatePresence initial={false}>
+                          {on && (
+                            <motion.span
+                              initial={{ width: 0, opacity: 0, scale: 0 }}
+                              animate={{ width: "auto", opacity: 1, scale: 1 }}
+                              exit={{ width: 0, opacity: 0, scale: 0 }}
+                              className="mr-2 inline-block align-middle text-[11px]"
+                            >
+                              ✓
+                            </motion.span>
+                          )}
+                        </AnimatePresence>
+                        {d.bn}
+                      </motion.button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-x-2.5 gap-y-2.5">
-                {shown.map((d) => {
-                  const on = set.has(d.id);
-                  return (
-                    <button
-                      key={d.id}
-                      type="button"
-                      onClick={() => toggle(d.id)}
-                      aria-pressed={on}
-                      className={
-                        "rounded-full px-5 py-2.5 text-[17px] transition " +
-                        (on
-                          ? "bg-brand-deep text-white shadow-sm"
-                          : "bg-sand text-ink hover:bg-sand-line")
-                      }
-                    >
-                      {on && <span className="mr-2 text-[10px] align-middle">●</span>}
-                      {d.bn}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            </Reveal>
           );
         })}
       </div>

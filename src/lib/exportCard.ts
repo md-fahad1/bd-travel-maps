@@ -17,9 +17,35 @@ function save(url: string, filename: string) {
   a.remove();
 }
 
+/** Make sure every <img> inside the card is fully decoded before we snapshot it. */
+async function waitForImages(node: HTMLElement) {
+  const imgs = Array.from(node.querySelectorAll("img"));
+  await Promise.all(
+    imgs.map(async (img) => {
+      try {
+        if (!img.complete) {
+          await new Promise<void>((res) => {
+            img.addEventListener("load", () => res(), { once: true });
+            img.addEventListener("error", () => res(), { once: true });
+          });
+        }
+        await img.decode();
+      } catch {
+        /* ignore broken image */
+      }
+    }),
+  );
+  if (document.fonts?.ready) await document.fonts.ready;
+}
+
+function baseOptions(node: HTMLElement, bg: string) {
+  return { pixelRatio: ratioFor(node), backgroundColor: bg, cacheBust: false };
+}
+
 /** Renders the card node and downloads it as PNG / JPG / PDF. */
 export async function exportCard(node: HTMLElement, format: ExportFormat, bg: string) {
-  const opts = { pixelRatio: ratioFor(node), backgroundColor: bg, cacheBust: true };
+  await waitForImages(node);
+  const opts = baseOptions(node, bg);
 
   // Safari sometimes skips fonts/images on the first render, so warm up once.
   try {
@@ -58,4 +84,26 @@ export async function exportCard(node: HTMLElement, format: ExportFormat, bg: st
   pdf.rect(0, 0, w + margin * 2, h + margin * 2, "F");
   pdf.addImage(jpg, "JPEG", margin, margin, w, h);
   pdf.save("amar-bangladesh-map.pdf");
+}
+
+/**
+ * Share the card through the phone's share sheet (Web Share API).
+ * Falls back to a normal PNG download where sharing files isn't supported.
+ */
+export async function shareCard(node: HTMLElement, bg: string): Promise<"shared" | "downloaded"> {
+  await waitForImages(node);
+  const dataUrl = await toPng(node, baseOptions(node, bg));
+  const blob = await (await fetch(dataUrl)).blob();
+  const file = new File([blob], "amar-bangladesh-map.png", { type: "image/png" });
+  const data = { files: [file], title: "আমার দেশ ম্যাপ", text: "আমার বাংলাদেশ ভ্রমণ ম্যাপ 🇧🇩" };
+  if (navigator.canShare?.(data)) {
+    try {
+      await navigator.share(data);
+      return "shared";
+    } catch (e) {
+      if ((e as Error).name === "AbortError") return "shared";
+    }
+  }
+  save(dataUrl, "amar-bangladesh-map.png");
+  return "downloaded";
 }

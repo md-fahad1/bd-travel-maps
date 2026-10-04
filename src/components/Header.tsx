@@ -1,38 +1,73 @@
 "use client";
 
+import { motion, useScroll, useSpring } from "framer-motion";
+
 export type TabId = "map" | "explore" | "trip";
 
-const TABS: { id: TabId; label: string }[] = [
-  { id: "map", label: "আমার ম্যাপ" },
-  { id: "explore", label: "কোথায় ঘুরবেন" },
-  { id: "trip", label: "ট্রিপ প্ল্যানার" },
+const TABS: { id: TabId; label: string; icon: string }[] = [
+  { id: "map", label: "আমার ম্যাপ", icon: "🗺️" },
+  { id: "explore", label: "কোথায় ঘুরবেন", icon: "🧭" },
+  { id: "trip", label: "ট্রিপ প্ল্যানার", icon: "🎒" },
 ];
 
 export default function Header({ tab, onTab }: { tab: TabId; onTab: (t: TabId) => void }) {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 28 });
+
   return (
-    <header className="mx-auto max-w-3xl px-4 pt-5">
-      <div className="flex items-center justify-center gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand">
-          <span className="h-5 w-5 rounded-full bg-flag-red" />
-        </span>
-        <span className="font-display text-2xl font-extrabold">আমার দেশ ম্যাপ</span>
-      </div>
-      <nav className="mt-5 grid grid-cols-3 gap-1 rounded-full bg-sand p-1.5" aria-label="প্রধান মেনু">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => onTab(t.id)}
-            aria-current={tab === t.id ? "page" : undefined}
-            className={
-              "font-display rounded-full px-2 py-3.5 text-[17px] font-semibold transition " +
-              (tab === t.id ? "bg-white text-ink shadow-sm" : "text-ink-soft hover:text-ink")
-            }
-          >
-            {t.label}
+    <header className="sticky top-0 z-50">
+      <div className="glass border-x-0 border-t-0 border-b-sand-line/70">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+          <button type="button" onClick={() => onTab("map")} className="flex items-center gap-2.5">
+            <motion.span
+              whileHover={{ rotate: 180 }}
+              transition={{ type: "spring", stiffness: 200, damping: 12 }}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-brand shadow-md shadow-brand/30"
+            >
+              <motion.span
+                animate={{ scale: [1, 1.18, 1] }}
+                transition={{ repeat: Infinity, duration: 2.4 }}
+                className="h-4 w-4 rounded-full bg-flag-red"
+              />
+            </motion.span>
+            <span className="font-display hidden text-xl font-extrabold sm:inline">আমার দেশ ম্যাপ</span>
           </button>
-        ))}
-      </nav>
+
+          <nav className="relative flex gap-1 rounded-full bg-sand/90 p-1" aria-label="প্রধান মেনু">
+            {TABS.map((t) => {
+              const active = tab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => onTab(t.id)}
+                  aria-current={active ? "page" : undefined}
+                  className={
+                    "font-display relative rounded-full px-3 py-2.5 text-[15px] font-semibold transition-colors sm:px-5 sm:text-[16px] " +
+                    (active ? "text-ink" : "text-ink-soft hover:text-ink")
+                  }
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="tab-pill"
+                      className="absolute inset-0 rounded-full bg-white shadow-sm"
+                      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative">
+                    <span className="mr-1.5 hidden sm:inline">{t.icon}</span>
+                    {t.label}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
+      <motion.div
+        style={{ scaleX }}
+        className="h-[3px] origin-left bg-gradient-to-r from-brand via-[#2fb26f] to-flag-red"
+      />
     </header>
   );
 }
