@@ -66,7 +66,7 @@ export default function Header({ tab, onTab }: { tab: TabId; onTab: (t: TabId) =
       </div>
       <motion.div
         style={{ scaleX }}
-        className="h-[3px] origin-left bg-gradient-to-r from-brand via-[#2fb26f] to-flag-red"
+        className="h-[3px] origin-left bg-gradient-to-r from-brand via-teal-400 to-flag-red"
       />
     </header>
   );

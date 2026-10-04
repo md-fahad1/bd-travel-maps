@@ -34,7 +34,11 @@ const title = name.trim() ? `${name.trim()}-এর বাংলাদেশ ভ�
     <div
       ref={ref}
       className="flex flex-col rounded-[28px] p-4 sm:p-6"
-      style={{ background: theme.bg, color: theme.ink, aspectRatio: "4 / 5" }}
+      style={{
+        background: `radial-gradient(110% 70% at 100% 0%, ${theme.accent}26, transparent 60%), ${theme.bg}`,
+        color: theme.ink,
+        aspectRatio: "4 / 5",
+      }}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2.5">
@@ -77,6 +81,7 @@ const title = name.trim() ? `${name.trim()}-এর বাংলাদেশ ভ�
                 <path
                   key={d.id}
                   d={d.d}
+                  className="district-path"
                   fill={on ? theme.accent : theme.base}
                   stroke={theme.line}
                   strokeWidth={on ? 1.2 : 1}

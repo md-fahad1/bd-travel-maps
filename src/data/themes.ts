@@ -11,11 +11,10 @@ export interface Theme {
   dot: string; // label dot
   swatchBg: string;
 }
-
 export const THEMES: Theme[] = [
-  { id: "classic", name: "ক্লাসিক", bg: "#f6f2ea", ink: "#16211d", sub: "#7a7468", base: "#e3dccd", line: "#f6f2ea", accent: "#12795a", track: "#e3dccd", dot: "#e5384f", swatchBg: "#f6f2ea" },
-  { id: "night", name: "নাইট", bg: "#1a1a3b", ink: "#f2f2ff", sub: "#9a9ac8", base: "#2f2f5c", line: "#1a1a3b", accent: "#7d8cff", track: "#2f2f5c", dot: "#ffd166", swatchBg: "#1a1a3b" },
-  { id: "sunset", name: "সানসেট", bg: "#fff3ec", ink: "#2a1812", sub: "#9a7466", base: "#f3dfd3", line: "#fff3ec", accent: "#ee5a3a", track: "#f3dfd3", dot: "#2a1812", swatchBg: "#fff3ec" },
-  { id: "ocean", name: "ওশান", bg: "#eaf3fd", ink: "#10233a", sub: "#6b86a3", base: "#cfdff3", line: "#eaf3fd", accent: "#1f6feb", track: "#cfdff3", dot: "#ff6b6b", swatchBg: "#eaf3fd" },
-  { id: "dark", name: "ডার্ক", bg: "#14181a", ink: "#f1f5f3", sub: "#8b9692", base: "#2b3235", line: "#14181a", accent: "#2fb26f", track: "#2b3235", dot: "#ffd166", swatchBg: "#14181a" },
+  { id: "classic", name: "ক্লাসিক", bg: "#f3faf5", ink: "#0d1f19", sub: "#5f7a6e", base: "#d3e8dc", line: "#f3faf5", accent: "#0a9d6b", track: "#d3e8dc", dot: "#f43f5e", swatchBg: "#f3faf5" },
+  { id: "night", name: "নাইট", bg: "#0f1030", ink: "#f4f4ff", sub: "#a5a8e0", base: "#262a63", line: "#0f1030", accent: "#8b9bff", track: "#262a63", dot: "#ffd166", swatchBg: "#0f1030" },
+  { id: "sunset", name: "সানসেট", bg: "#fff4ec", ink: "#2b1710", sub: "#a2705c", base: "#fbd9c4", line: "#fff4ec", accent: "#f2542d", track: "#fbd9c4", dot: "#2b1710", swatchBg: "#fff4ec" },
+  { id: "ocean", name: "ওশান", bg: "#eaf6ff", ink: "#0b2239", sub: "#5f86a8", base: "#c4e0f7", line: "#eaf6ff", accent: "#0b78e3", track: "#c4e0f7", dot: "#ff5470", swatchBg: "#eaf6ff" },
+  { id: "dark", name: "ডার্ক", bg: "#0e1513", ink: "#eefaf4", sub: "#85a095", base: "#22302b", line: "#0e1513", accent: "#34d399", track: "#22302b", dot: "#fbbf24", swatchBg: "#0e1513" },
 ];

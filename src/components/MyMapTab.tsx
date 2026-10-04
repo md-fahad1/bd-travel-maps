@@ -125,20 +125,20 @@ export default function MyMapTab({ state, update }: Props) {
             {bn(DISTRICTS.length)} জেলা · {bn(DIVISIONS.length)} বিভাগ
           </span>
 
-          <h1 className="font-display mx-auto mt-4 max-w-2xl text-[32px] font-extrabold leading-tight tracking-tight sm:mt-5 sm:text-5xl lg:text-6xl">
+          <h1 className="rise [animation-delay:100ms] font-display mx-auto mt-4 max-w-2xl text-[32px] font-extrabold leading-tight tracking-tight sm:mt-5 sm:text-5xl lg:text-6xl">
             <span className="bg-gradient-to-r from-brand to-flag-red bg-clip-text text-transparent">
               বাংলাদেশের
             </span>{" "}
             কতটুকু ঘুরে দেখেছেন?
           </h1>
 
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-ink-soft sm:mt-4 sm:text-lg">
+          <p className="rise [animation-delay:200ms] mx-auto mt-3 max-w-xl text-sm leading-relaxed text-ink-soft sm:mt-4 sm:text-lg">
             ঘুরে দেখা জেলাগুলো বেছে নিন, পছন্দের থিম দিন এবং নিজের ভ্রমণ ম্যাপ তৈরি করে শেয়ার করুন।
           </p>
 
           <a
             href="#picker"
-            className="font-display mt-5 inline-flex items-center gap-2 rounded-full bg-[#16211d] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-black sm:mt-6 sm:text-base"
+            className="btn-shine glow-ring font-display relative mt-5 inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-brand-deep via-brand to-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition hover:-translate-y-0.5 sm:mt-6 sm:text-base"
           >
             জেলা বাছাই শুরু করুন
             <span aria-hidden>↓</span>
@@ -168,7 +168,7 @@ export default function MyMapTab({ state, update }: Props) {
           />
         </div>
 
-        <div className="rounded-[24px] border border-sand-line bg-white/70 p-4 shadow-sm backdrop-blur-sm sm:p-5">
+        <div className="card-lift rounded-[24px] border border-sand-line bg-white/70 p-4 shadow-sm backdrop-blur-sm sm:p-5">
           <h2 className="font-display mb-3 text-base font-extrabold sm:text-lg">
             আপনার প্রোফাইল
           </h2>
@@ -201,7 +201,7 @@ export default function MyMapTab({ state, update }: Props) {
                       height="22"
                       viewBox="0 0 24 24"
                       fill="none"
-                      stroke="#6f6a5f"
+                      stroke="#5a6f66"
                       strokeWidth="1.8"
                       strokeLinecap="round"
                     >
@@ -254,7 +254,7 @@ export default function MyMapTab({ state, update }: Props) {
                 className="peer sr-only"
               />
 
-              <span className="relative h-6 w-11 shrink-0 rounded-full bg-[#d9d2c3] transition peer-checked:bg-brand after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5" />
+              <span className="relative h-6 w-11 shrink-0 rounded-full bg-[#cbddd2] transition peer-checked:bg-brand after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5" />
             </label>
           </div>
         </div>
@@ -291,7 +291,7 @@ export default function MyMapTab({ state, update }: Props) {
           </section>
 
           <section className="space-y-4">
-            <div className="rounded-[24px] border border-sand-line bg-white/70 p-4 shadow-sm backdrop-blur-sm sm:p-5">
+            <div className="card-lift rounded-[24px] border border-sand-line bg-white/70 p-4 shadow-sm backdrop-blur-sm sm:p-5">
               <div className="mb-3 flex items-center gap-2.5">
                 <span className="font-display flex h-7 w-7 items-center justify-center rounded-full bg-[#16211d] text-sm font-bold text-white">
                   ২
@@ -343,7 +343,7 @@ export default function MyMapTab({ state, update }: Props) {
 
             
 
-            <div className="rounded-[24px] border border-sand-line bg-white/70 p-4 shadow-sm backdrop-blur-sm sm:p-5">
+            <div className="card-lift rounded-[24px] border border-sand-line bg-white/70 p-4 shadow-sm backdrop-blur-sm sm:p-5">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <span className="font-display flex h-7 w-7 items-center justify-center rounded-full bg-[#16211d] text-sm font-bold text-white">
@@ -375,7 +375,7 @@ export default function MyMapTab({ state, update }: Props) {
                     className={
                       "font-display flex flex-col items-center rounded-2xl border px-2 py-3 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 sm:py-3.5 " +
                       (index === 0
-                        ? "border-[#16211d] bg-[#16211d] text-white hover:bg-black"
+                        ? "border-transparent bg-gradient-to-r from-brand-deep to-brand text-white"
                         : "border-sand-line bg-white hover:bg-sand")
                     }
                   >
