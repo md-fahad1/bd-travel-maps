@@ -1,3 +1,4 @@
+
 "use client";
 
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
@@ -19,10 +20,10 @@ export default function Home() {
   };
 
   return (
-    // reducedMotion="user" => people who turned off animations on their device won't see them
     <MotionConfig reducedMotion="user">
       <div className="min-h-screen">
         <Header tab={tab} onTab={go} />
+
         <AnimatePresence mode="wait">
           <motion.main
             key={tab}
@@ -31,13 +32,34 @@ export default function Home() {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.28 }}
           >
-            {tab === "map" && <MyMapTab state={state} update={update} goExplore={() => go("explore")} />}
-            {tab === "explore" && <ExploreTab state={state} update={update} goTrip={() => go("trip")} />}
-            {tab === "trip" && <TripPlannerTab state={state} update={update} goExplore={() => go("explore")} />}
+            {tab === "map" && (
+              <MyMapTab
+                state={state}
+                update={update}
+              />
+            )}
+
+            {tab === "explore" && (
+              <ExploreTab
+                state={state}
+                update={update}
+                goTrip={() => go("trip")}
+              />
+            )}
+
+            {tab === "trip" && (
+              <TripPlannerTab
+                state={state}
+                update={update}
+                goExplore={() => go("explore")}
+              />
+            )}
           </motion.main>
         </AnimatePresence>
+
         <Footer />
       </div>
     </MotionConfig>
   );
 }
+
