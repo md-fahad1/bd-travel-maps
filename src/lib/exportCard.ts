@@ -2,19 +2,53 @@ import { toJpeg, toPng } from "html-to-image";
 
 export type ExportFormat = "png" | "jpg" | "pdf";
 
-const TARGET_WIDTH = 1200; // output pixel width
+const TARGET_WIDTH = 1080; // output pixel width
 
 function ratioFor(node: HTMLElement) {
   return Math.max(2, TARGET_WIDTH / node.offsetWidth);
 }
 
-function save(url: string, filename: string) {
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [head, body] = dataUrl.split(",");
+  const mime = head.match(/:(.*?);/)?.[1] ?? "image/png";
+  const bin = atob(body);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
+async function saveBlob(blob: Blob, filename: string) {
+  const ua = navigator.userAgent;
+  const mobile =
+    /iPhone|iPad|iPod|Android/i.test(ua) ||
+    (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+
+  // Phones: open the share sheet so the person can "Save Image" / "Save to Files".
+  if (mobile && typeof navigator.canShare === "function") {
+    const file = new File([blob], filename, { type: blob.type });
+    if (navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "আমার দেশ ম্যাপ" });
+        return;
+      } catch (e) {
+        if ((e as Error).name === "AbortError") return;
+        /* share blocked, fall through to normal download */
+      }
+    }
+  }
+
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
   a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+async function save(dataUrl: string, filename: string) {
+  await saveBlob(dataUrlToBlob(dataUrl), filename);
 }
 
 /** Make sure every <img> inside the card is fully decoded before we snapshot it. */
@@ -55,13 +89,13 @@ export async function exportCard(node: HTMLElement, format: ExportFormat, bg: st
   }
 
   if (format === "png") {
-    save(await toPng(node, opts), "amar-bangladesh-map.png");
+    await save(await toPng(node, opts), "amar-bangladesh-map.png");
     return;
   }
 
   const jpg = await toJpeg(node, { ...opts, quality: 0.95 });
   if (format === "jpg") {
-    save(jpg, "amar-bangladesh-map.jpg");
+    await save(jpg, "amar-bangladesh-map.jpg");
     return;
   }
 
@@ -83,7 +117,7 @@ export async function exportCard(node: HTMLElement, format: ExportFormat, bg: st
   pdf.setFillColor(bg);
   pdf.rect(0, 0, w + margin * 2, h + margin * 2, "F");
   pdf.addImage(jpg, "JPEG", margin, margin, w, h);
-  pdf.save("amar-bangladesh-map.pdf");
+  await saveBlob(pdf.output("blob"), "amar-bangladesh-map.pdf");
 }
 
 /**
@@ -104,6 +138,6 @@ export async function shareCard(node: HTMLElement, bg: string): Promise<"shared"
       if ((e as Error).name === "AbortError") return "shared";
     }
   }
-  save(dataUrl, "amar-bangladesh-map.png");
+  await save(dataUrl, "amar-bangladesh-map.png");
   return "downloaded";
 }
