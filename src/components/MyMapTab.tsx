@@ -83,7 +83,26 @@ export default function MyMapTab({ state, update }: Props) {
     return () => setPreviewHandler(null);
   }, []);
 
-  const closePreview = () => {
+  const inApp =
+    typeof navigator !== "undefined" &&
+    /FBAN|FBAV|FB_IAB|Messenger|Instagram|Line\//i.test(navigator.userAgent);
+
+  const openChrome = () => {
+    const { host, pathname, search } = window.location;
+    window.location.href = `intent://${host}${pathname}${search}#Intent;scheme=https;package=com.android.chrome;end`;
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setToast("✓ লিংক কপি হয়েছে, Chrome-এ পেস্ট করুন");
+    } catch {
+      setToast("লিংক কপি করা যায়নি");
+    }
+    setTimeout(() => setToast(""), 3000);
+  };
+
+  const closePreview = () => {  const closePreview = () => {
     const url = preview?.url;
     setPreview(null);
     if (url) setTimeout(() => URL.revokeObjectURL(url), 2000);
@@ -444,6 +463,28 @@ export default function MyMapTab({ state, update }: Props) {
               নিচের বাটনে চাপ দিয়ে সেভ করুন। না হলে ছবিতে অনেকক্ষণ চেপে ধরে "Download image" বেছে নিন।
             </p>
 
+            {inApp && (
+              <div className="mt-3 rounded-2xl bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">
+                Messenger/Facebook এর ভেতরের ব্রাউজারে ডাউনলোড আটকে যায়। সেভ করতে Chrome-এ খুলুন:
+                <div className="mt-2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={openChrome}
+                    className="rounded-xl bg-amber-500 px-3 py-1.5 font-bold text-white"
+                  >
+                    Chrome-এ খুলুন
+                  </button>
+                  <button
+                    type="button"
+                    onClick={copyLink}
+                    className="rounded-xl border border-amber-300 bg-white px-3 py-1.5 font-bold"
+                  >
+                    লিংক কপি
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="mt-3 max-h-[55vh] overflow-auto rounded-2xl border border-sand-line bg-sand">
               {preview.name.endsWith(".pdf") ? (
                 <p className="p-6 text-center text-sm">📄 {preview.name}</p>
@@ -475,4 +516,5 @@ export default function MyMapTab({ state, update }: Props) {
       <Toast message={toast} />
     </>
   );
+}
 }
