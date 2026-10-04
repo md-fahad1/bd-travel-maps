@@ -47,7 +47,7 @@ const title = name.trim() ? `${name.trim()}-এর বাংলাদেশ ভ�
             <img
               src={photo}
               alt=""
-              className="h-9 w-9 shrink-0 rounded-full object-cover sm:h-12 sm:w-12"
+              className="h-9 w-9 shrink-0 rounded-md object-cover sm:h-16 sm:w-16"
               style={{ border: `2px solid ${theme.bg}`, boxShadow: `0 0 0 2px ${theme.accent}` }}
             />
           )}
