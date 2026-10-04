@@ -5,7 +5,7 @@ import { DISTRICTS, MAP_HEIGHT, MAP_WIDTH } from "@/data/districts";
 import { DIVISIONS } from "@/data/divisions";
 import type { Theme } from "@/data/themes";
 import { bn } from "@/lib/bn";
-import { useDataUrl } from "@/lib/useDataUrl";
+import { DEVELOPER_PHOTO } from "@/data/developerPhoto";
 interface Props {
   visited: string[];
   theme: Theme;
@@ -20,7 +20,7 @@ const MapCard = forwardRef<HTMLDivElement, Props>(function MapCard(
   { visited, theme, name, photo, showLabels, onToggle },
   ref,
 ) {
-  const devPhoto = useDataUrl("/developer.jpeg");
+  const devPhoto = DEVELOPER_PHOTO;
   const set = new Set(visited);
   const count = visited.length;
   const total = DISTRICTS.length;
@@ -157,6 +157,8 @@ const title = name.trim() ? `${name.trim()}-এর বাংলাদেশ ভ�
             <img
               src={devPhoto}
               alt="Md Fahad Khan"
+              loading="eager"
+              decoding="sync"
               className="h-5 w-5 rounded-full object-cover sm:h-6 sm:w-6"
               style={{ boxShadow: `0 0 0 1.5px ${theme.accent}` }}
             />
